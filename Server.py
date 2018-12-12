@@ -9,29 +9,18 @@ class Server:
 		self.port = port
 		
 
-	
-			
+	def sender(self, message, address):
+		self.threadfinished = False
+		print('debug1 %s', message)
+		while(self.threadfinished == False):
+			self.sock.sendto(message.encode(), address)
+			print('\nsending again..')
+			time.sleep(1)
 
-	def sendPhrase():
-		print('\nfoo')
-
-	def sendCnxAck(self, address):
-		self.sock.sendto('CNXACK', address)
-
-	def recCnxAck(self):
+	def listener(self, message):
+		print('debug2 %s', message)
 		data, address = self.sock.recvfrom(1024)
-		print('debug3 %s' % self.threadfinished)
-		while data.decode() != 'CNXACKACK':
-			print('debug4 %s' % self.threadfinished)
-			data, address = self.sock.recvfrom(1024)
-		self.threadfinished = True
-		self.data = data
-		self.address = address
-		return
-
-	def listenerNewCnx(self):
-		data, address = self.sock.recvfrom(1024)
-		while data.decode() != 'NEWCNX':
+		while data.decode() != message:
 			data, address = self.sock.recvfrom(1024)
 		self.threadfinished = True
 		self.data = data
@@ -40,25 +29,19 @@ class Server:
 
 	def waitNewCnx(self):
 		self.threadfinished = False
-		t1 = threading.Thread(target=self.listenerNewCnx())
+		t1 = threading.Thread(target=self.listener(), args=('NEWCNX',))
 		t1.start()
 		t1.join()
 		self.player1 = self.address
 		self.threadfinished = False
-		print('debug1 %s' % self.threadfinished)
-		t2 = threading.Thread(target=self.recCnxAck())
-		
+		t1 = threading.Thread(target=self.sender(), args=('CNXACK', self.player1))
+		t2 = threading.Thread(target=self.listener(), args=('CNXACKACK'))
+		t1.start()
 		t2.start()
-		print('debug2 %s' % self.threadfinished)
-		while(self.threadfinished == False):
-			sendCnxAck(self.player1)
-			print('\nsending again..')
-			time.sleep(1)
+		t1.join()
+		t2k.join()
+		
 		#copypaste for player2, so cuidar pra nao deixar o mesmo player conectar 2x
-
-
-
-
 
 
 	def main(self):
