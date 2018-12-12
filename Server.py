@@ -22,6 +22,7 @@ class Server:
 		data, address = self.sock.recvfrom(1024)
 		while data.decode() != self.msglistener:
 			data, address = self.sock.recvfrom(1024)
+			time.sleep(1)
 		self.threadfinished = True
 		self.data = data
 		self.address = address
@@ -30,20 +31,20 @@ class Server:
 	def waitNewCnx(self):
 		self.threadfinished = False
 		self.msglistener = 'NEWCNX'
-		t1 = threading.Thread(target=self.listener())
+		t1 = threading.Thread(target=self.listener)
 		t1.start()
 		t1.join()
 		self.player1 = self.address
 		self.threadfinished = False
 		self.msgsender = 'CNXACK'
 		self.addrsender = self.player1
-		t1 = threading.Thread(target=self.sender())
+		t1 = threading.Thread(target=self.sender)
 		self.msglistener = 'CNXACKACK'
-		t2 = threading.Thread(target=self.listener())
-		t1.start()
+		t2 = threading.Thread(target=self.listener)
 		t2.start()
+		t1.start()
 		t1.join()
-		t2k.join()
+		t2.join()
 		
 		#copypaste for player2, so cuidar pra nao deixar o mesmo player conectar 2x
 
