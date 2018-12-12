@@ -13,21 +13,25 @@ class Client:
 		self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 		# Bind the socket to the port
 		server_address = ('localhost', self.port)
-		message = 'This is the message.  It will be repeated.'.encode()
+		message = 'NEWCNX'.encode()
 		condition = 'y'
-		while condition == 'y':
+		while condition == 'y' or condition == 't':
 
 			# Send data
-			print('sending "%s"' % message)
+			if condition == 'y':
+				message = 'NEWCNX'.encode()
+			else:
+				message = 'CNXACKACK'.encode()
+
+			print('sending "%s"' % message.decode())
 			sent = self.sock.sendto(message, server_address)
 
 			# Receive response
-			print('waiting to receive')
-			data, server = self.sock.recvfrom(1024)
-			print('received "%s"' % data)
+			#print('waiting to receive')
+			#data, server = self.sock.recvfrom(1024)
+			#print('received "%s"' % data)
 
-			condition = input("\ncontinue?(y/n) ")
-			print(condition)
+			condition = input("\ncontinue?(y/n)(t for ackack) ")
 		
 		print('closing socket')
 		self.sock.close()
