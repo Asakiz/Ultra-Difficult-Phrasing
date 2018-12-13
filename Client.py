@@ -139,7 +139,7 @@ class Client:
 			#pprinter()
 		return
 	
-
+		
 	def playing(self):
 		self.threadfinished = False
 		t1 = threading.Thread(target=self.letterSender)
