@@ -77,17 +77,18 @@ class Server:
 
 
 	def switchzao(self, argument):
-	    switcher = {
-	        1: "Frase Simples",
-	        2: "As coisas começam a complicar",
-	        3: "Nao consegui colocar acentos nas frases t-t",
-	        4: "@#$%*@$&&¨@$%*#",
-	        5: "Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit...",
-	        6: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec interdum nulla ipsum, vitae rhoncus sem ultricies eu. Praesent vel ligula libero. Nunc eu placerat purus, ut vestibulum felis. Morbi placerat pellentesque sem a facilisis. Duis blandit enim nunc, vel cursus lectus egestas ac. Fusce nec enim feugiat, porttitor erat non, malesuada sapien. Vestibulum ullamcorper est quis ullamcorper blandit. Suspendisse potenti.",
-	    }
-	    return switcher.get(argument, "fail")
+		switcher = {
+			1: "Frase Simples",
+			2: "As coisas começam a complicar",
+			3: "Nao consegui colocar acentos nas frases t-t",
+			4: "@#$%*@$&&¨@$%*#",
+			5: "Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit...",
+			6: "Lorem ipsum dolor sit amet, consectetur adipiscing elit." #Donec interdum nulla ipsum, vitae rhoncus sem ultricies eu. Praesent vel ligula libero. Nunc eu placerat purus, ut vestibulum felis. Morbi placerat pellentesque sem a facilisis. Duis blandit enim nunc, vel cursus lectus egestas ac. Fusce nec enim feugiat, porttitor erat non, malesuada sapien. Vestibulum ullamcorper est quis ullamcorper blandit. Suspendisse potenti.",
+		}
+		return switcher.get(argument, "fail")
 
 	def prepareGame(self):
+		random.seed(3452367)
 		escolha = random.randint(1, 6)
 		return self.switchzao(escolha)
 
@@ -118,7 +119,7 @@ class Server:
 			msg1 = 'PHRUPDT1'+self.frasep1
 			self.sock.sendto(msg1.encode(), self.player1)
 			msg2 = 'PHRUPDT2'+self.frasep2
-			self.sock.sendto(msg1.encode(), self.player2)
+			self.sock.sendto(msg2.encode(), self.player2)
 			time.sleep(1)
 		return
 

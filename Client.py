@@ -14,25 +14,25 @@ class Client:
 		self.fraseatual = ''
 #taken from https://stackoverflow.com/questions/510357/python-read-a-single-character-from-the-user
 	def getChar(self):
-	    try:
-	        # for Windows-based systems
-	        import msvcrt # If successful, we are on Windows
-	        return msvcrt.getch()
+		try:
+			# for Windows-based systems
+			import msvcrt # If successful, we are on Windows
+			return msvcrt.getch()
 
-	    except ImportError:
-	        # for POSIX-based systems (with termios & tty support)
-	        import tty, sys, termios  # raises ImportError if unsupported
+		except ImportError:
+			# for POSIX-based systems (with termios & tty support)
+			import tty, sys, termios  # raises ImportError if unsupported
 
-	        fd = sys.stdin.fileno()
-	        oldSettings = termios.tcgetattr(fd)
+			fd = sys.stdin.fileno()
+			oldSettings = termios.tcgetattr(fd)
 
-	        try:
-	            tty.setcbreak(fd)
-	            answer = sys.stdin.read(1)
-	        finally:
-	            termios.tcsetattr(fd, termios.TCSADRAIN, oldSettings)
+			try:
+				tty.setcbreak(fd)
+				answer = sys.stdin.read(1)
+			finally:
+				termios.tcsetattr(fd, termios.TCSADRAIN, oldSettings)
 
-        	return answer
+			return answer
 
 	def sender(self, message, address):
 		self.threadfinished = False
@@ -59,6 +59,7 @@ class Client:
 			self.player = '1'
 		else:
 			self.player = '2'
+		print(self.player+'\n')
 		self.threadfinished = True
 		self.data = data
 		self.address = address
@@ -109,7 +110,8 @@ class Client:
 	def letterSender(self):
 		while self.threadfinished == False:
 			letter = self.getChar()
-			if(letter == '\b'):
+			print(letter)
+			if(letter == b'\x08'):
 				msgletter = 'BACKSP'+self.player+'CE'
 			else:
 				msgletter = 'LETTER'+self.player+letter.decode()
@@ -117,18 +119,20 @@ class Client:
 		return
 
 	def pprinter(self):
-		
+		print('\n\n'+self.frase+'\n\n'+self.fraseatual+'\n\n')
 
 	def phraseUpdater(self):
 		while self.threadfinished == False:
+			self.pprinter()
 			data, address = self.sock.recvfrom(1024)
 			while data.decode()[0:7] != 'PHRUPDT'+self.player and data.decode() != 'WINNER' and data.decode() != 'LOSER':
 				data, address = self.sock.recvfrom(1024)
+				print(data.decode())
 			if(data.decode() == 'WINNER'):
-				self.threadfinished == True
+				self.threadfinished = True
 				self.gameover = 'winner'
 			elif(data.decode() == 'LOSER'):
-				self.threadfinished == True
+				self.threadfinished = True
 				self.gameover = 'loser'
 			else:
 				self.fraseatual = data.decode()[8:len(data.decode())]
@@ -167,6 +171,8 @@ class Client:
 		self.newCnx()
 
 		self.playing()
+
+		#process gameover
 
 
 		print('\nclosing socket')
