@@ -72,6 +72,7 @@ class Server:
 		t2.start()
 		t1.join()
 		t2.join()
+		return
 
 
 	def switchzao(self, argument):
@@ -106,9 +107,10 @@ class Server:
 			if(self.frase == self.frasep1):
 				self.winner = '1'
 				break
-			else if(self.frase == self.frasep2):
+			elif(self.frase == self.frasep2):
 				self.winner = '2'
 				break
+		return
 
 	def phraseUpdater(self):
 		while self.winner == '0':
@@ -117,6 +119,7 @@ class Server:
 			msg2 = 'PHRUPDT2'+self.frasep2
 			self.sock.sendto(msg1.encode(), player2)
 			time.sleep(1)
+		return
 
 	def letterRecog(self):
 		self.frasep1 = ""
@@ -127,6 +130,7 @@ class Server:
 		t2.start()
 		t1.join()
 		t2.join()
+		return
 		
 	def finishingGame(self):
 		self.threadfinished = False
@@ -150,6 +154,7 @@ class Server:
 		t2.join()
 		t3.join()
 		t4.join()
+		return
 
 
 	def main(self):
