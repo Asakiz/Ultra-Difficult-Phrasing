@@ -15,13 +15,14 @@ class Server:
 		self.threadfinished = False
 		while(self.threadfinished == False):
 			self.sock.sendto(message.encode(), address)
-			print('\nsending again..')
+			print('\nsending %s again..' % message)
 			time.sleep(1)
 		return
 
 	def listener(self, message):
 		data, address = self.sock.recvfrom(1024)
 		while data.decode() != message:
+			print('\nrecieving %s again..' % data.decode())
 			data, address = self.sock.recvfrom(1024)
 		self.threadfinished = True
 		self.data = data
@@ -32,7 +33,7 @@ class Server:
 		self.threadfinished2 = False
 		while(self.threadfinished2 == False):
 			self.sock.sendto(message.encode(), address)
-			print('\nsending again..')
+			print('\nsending %s again..' % message)
 			time.sleep(1)
 		return
 
@@ -79,7 +80,7 @@ class Server:
 	    switcher = {
 	        1: "Frase Simples",
 	        2: "As coisas começam a complicar",
-	        3: "ÀlgÚnS ÃcêNTöS",
+	        3: "Nao consegui colocar acentos nas frases t-t",
 	        4: "@#$%*@$&&¨@$%*#",
 	        5: "Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit...",
 	        6: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec interdum nulla ipsum, vitae rhoncus sem ultricies eu. Praesent vel ligula libero. Nunc eu placerat purus, ut vestibulum felis. Morbi placerat pellentesque sem a facilisis. Duis blandit enim nunc, vel cursus lectus egestas ac. Fusce nec enim feugiat, porttitor erat non, malesuada sapien. Vestibulum ullamcorper est quis ullamcorper blandit. Suspendisse potenti.",
@@ -115,9 +116,9 @@ class Server:
 	def phraseUpdater(self):
 		while self.winner == '0':
 			msg1 = 'PHRUPDT1'+self.frasep1
-			self.sock.sendto(msg1.encode(), player1)
+			self.sock.sendto(msg1.encode(), self.player1)
 			msg2 = 'PHRUPDT2'+self.frasep2
-			self.sock.sendto(msg1.encode(), player2)
+			self.sock.sendto(msg1.encode(), self.player2)
 			time.sleep(1)
 		return
 

@@ -3,6 +3,8 @@ import threading
 import sys
 import time
 
+#	cd Documents\Faculdade\Redes\Ultra-Difficult-Phrasing
+
 class Client:
 
 	def __init__(self, port=10000):
@@ -11,7 +13,7 @@ class Client:
 		self.frase = ''
 		self.fraseatual = ''
 #taken from https://stackoverflow.com/questions/510357/python-read-a-single-character-from-the-user
-	def getChar():
+	def getChar(self):
 	    try:
 	        # for Windows-based systems
 	        import msvcrt # If successful, we are on Windows
@@ -36,7 +38,7 @@ class Client:
 		self.threadfinished = False
 		while(self.threadfinished == False):
 			self.sock.sendto(message.encode(), address)
-			print('\nsending %s again..' % message)
+			#print('\nsending %s again..' % message)
 			time.sleep(1)
 		return
 
@@ -80,13 +82,19 @@ class Client:
 		return
 
 	def newCnx(self):
-		self.threadfinished = False
-		t1 = threading.Thread(target=self.sender, args=('NEWCNX', self.server_address))
+		#self.threadfinished = False
+		#t1 = threading.Thread(target=self.sender, args=('NEWCNX', self.server_address))
 		t2 = threading.Thread(target=self.definePlayerListener, args=('CNXACK',))
-		t1.start()
+		#t1.start()
+		#t2.start()
+		#t1.join()
+		#t2.join()
+
+		self.sock.sendto('NEWCNX'.encode(), self.server_address) #sender na thread tava dando ruim, nao sei pq
+		time.sleep(1)
 		t2.start()
-		t1.join()
 		t2.join()
+
 		print('\nrecebendo frase para iniciar o jogo')
 		self.threadfinished = False
 		t1 = threading.Thread(target=self.sender, args=('CNXACKACK', self.server_address))
@@ -98,20 +106,23 @@ class Client:
 		self.tenTimesSender('PHRACK'+self.player, self.server_address)
 		return
 		
-	def letterSender(self, address):
+	def letterSender(self):
 		while self.threadfinished == False:
-			letter = getChar()
+			letter = self.getChar()
 			if(letter == '\b'):
 				msgletter = 'BACKSP'+self.player+'CE'
 			else:
-				msgletter = 'LETTER'+self.player+letter
-			self.sock.sendto(msgletter.encode(), address)
+				msgletter = 'LETTER'+self.player+letter.decode()
+			self.sock.sendto(msgletter.encode(), self.server_address)
 		return
+
+	def pprinter(self):
+		
 
 	def phraseUpdater(self):
 		while self.threadfinished == False:
 			data, address = self.sock.recvfrom(1024)
-			while data.decode()[0:7] != 'PHRUPDT'+player and data.decode() != 'WINNER' and data.decode() != 'LOSER':
+			while data.decode()[0:7] != 'PHRUPDT'+self.player and data.decode() != 'WINNER' and data.decode() != 'LOSER':
 				data, address = self.sock.recvfrom(1024)
 			if(data.decode() == 'WINNER'):
 				self.threadfinished == True
@@ -127,7 +138,7 @@ class Client:
 
 	def playing(self):
 		self.threadfinished = False
-		t1 = threading.Thread(target=self.letterSender, args=(self.server_address))
+		t1 = threading.Thread(target=self.letterSender)
 		t2 = threading.Thread(target=self.phraseUpdater)
 		t1.start()
 		t2.start()
